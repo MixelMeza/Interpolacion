@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Interpolación de Lagrange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px 40px;
+        }
+        h2 {
+            color: #1a237e;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #333;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            margin: 5px 5px 5px 0;
+            border: 1px solid #bdbdbd;
+            border-radius: 4px;
+        }
+        .points-row {
+            margin-bottom: 10px;
+        }
+        button {
+            background: #1a237e;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #3949ab;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #388e3c;
+            text-align: center;
+        }
+        .add-point {
+            background: #ffb300;
+            color: #222;
+            margin-left: 10px;
+        }
+        .add-point:hover {
+            background: #ffa000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Interpolación de Lagrange</h2>
+        <form id="lagrange-form" onsubmit="return false;">
+            <div id="points-container">
+                <div class="points-row">
+                    <label>Punto 1:</label>
+                    x: <input type="number" step="any" name="x0" required>
+                    y: <input type="number" step="any" name="y0" required>
+                </div>
+                <div class="points-row">
+                    <label>Punto 2:</label>
+                    x: <input type="number" step="any" name="x1" required>
+                    y: <input type="number" step="any" name="y1" required>
+                </div>
+            </div>
+            <button class="add-point" type="button" onclick="addPoint()">Agregar punto</button>
+            <label for="x_eval">Valor de x a interpolar:</label>
+            <input type="number" step="any" id="x_eval" required>
+            <button type="submit" onclick="calcularLagrange()">Calcular</button>
+        </form>
+        <div class="result" id="resultado"></div>
+    </div>
+    <script>
+        let pointCount = 2;
+        function addPoint() {
+            pointCount++;
+            const container = document.getElementById('points-container');
+            const div = document.createElement('div');
+            div.className = 'points-row';
+            div.innerHTML = `<label>Punto ${pointCount}:</label> x: <input type="number" step="any" name="x${pointCount-1}" required> y: <input type="number" step="any" name="y${pointCount-1}" required>`;
+            container.appendChild(div);
+        }
+
+        function calcularLagrange() {
+            const xs = [];
+            const ys = [];
+            const form = document.getElementById('lagrange-form');
+            for (let i = 0; i < pointCount; i++) {
+                const x = parseFloat(form[`x${i}`].value);
+                const y = parseFloat(form[`y${i}`].value);
+                xs.push(x);
+                ys.push(y);
+            }
+            const x_eval = parseFloat(document.getElementById('x_eval').value);
+            let resultado = 0;
+            for (let i = 0; i < xs.length; i++) {
+                let termino = ys[i];
+                for (let j = 0; j < xs.length; j++) {
+                    if (i !== j) {
+                        termino *= (x_eval - xs[j]) / (xs[i] - xs[j]);
+                    }
+                }
+                resultado += termino;
+            }
+            document.getElementById('resultado').innerText = `El valor interpolado en x = ${x_eval} es y = ${resultado}`;
+        }
+    </script>
+</body>
+</html>
