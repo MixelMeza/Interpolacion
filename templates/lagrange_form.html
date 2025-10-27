@@ -81,6 +81,11 @@
     <div class="container">
         <h2>Interpolación de Lagrange</h2>
         <form method="post">
+            <label for="metodo">Método:</label>
+            <select name="metodo" id="metodo">
+                <option value="lagrange" {% if metodo == 'lagrange' %}selected{% endif %}>Lagrange</option>
+                <option value="newton" {% if metodo == 'newton' %}selected{% endif %}>Newton (Diferencias Divididas)</option>
+            </select>
             <div id="points-container">
                 {% if puntos %}
                     {% for x, y in puntos %}
@@ -113,14 +118,35 @@
             {% if resultado == 'Error en los datos ingresados.' %}
                 {{ resultado }}
             {% else %}
+                <b>Valor interpolado:</b><br>
                 El valor interpolado en x = {{ x_eval }} es y = {{ resultado }}
+                {% if pasos %}
+                <div style="text-align:left; margin-top:15px; color:#333; font-size:15px;">
+                    <b>Pasos del método {{ 'Lagrange' if metodo == 'lagrange' else 'Newton' }}:</b>
+                    <ol>
+                        {% for paso in pasos %}
+                        <li>{{ paso|safe }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                {% endif %}
             {% endif %}
         </div>
         {% endif %}
         {% if polinomio is not none %}
         <div class="result" style="color:#1a237e; font-size:16px;">
-            <b>Polinomio de Lagrange:</b><br>
+            <b>Polinomio {{ 'de Lagrange' if metodo == 'lagrange' else 'de Newton' }}:</b><br>
             {{ polinomio }}
+            {% if pasos_poli %}
+            <div style="text-align:left; margin-top:10px; color:#333; font-size:15px;">
+                <b>Pasos para el polinomio:</b>
+                <ol>
+                    {% for paso in pasos_poli %}
+                    <li>{{ paso|safe }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            {% endif %}{}
         </div>
         {% endif %}
     </div>
